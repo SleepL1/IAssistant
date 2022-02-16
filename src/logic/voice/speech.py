@@ -1,8 +1,14 @@
 import pyttsx3 as tts
 import speech_recognition as spr
+import src.logic.lang.language as language
+import src.logic.data.data_preferences as data_preferences
 
 recognizer = spr.Recognizer()
 speaker = tts.init()
+
+speaker.setProperty('rate', 150)
+voices = speaker.getProperty('voices')
+speaker.setProperty('voice', voices[0])
 
 waiting_order = False
 
@@ -22,7 +28,7 @@ def listen(generic_assistant):
             recognizer.adjust_for_ambient_noise(mic, duration=0.2)
             audio = recognizer.listen(mic)
 
-            message = recognizer.recognize_google(audio, language="es-ES")
+            message = recognizer.recognize_google(audio, language=language.speech_rec_lang)
             validate_message(message, generic_assistant)
     except spr.UnknownValueError:
         recognizer = spr.Recognizer()
@@ -36,23 +42,24 @@ def validate_message(message, generic_assistant):
     message = message.lower()
     message = normalize_message(message)
 
+    print(message)
     if waiting_order:
-        if generic_assistant.get_assistant_name() in message:
-            message = message.replace(generic_assistant.get_assistant_name(), '')
+        if data_preferences.get_assistant_name() in message:
+            message = message.replace(data_preferences.get_assistant_name(), '')
             generic_assistant.request(message)
             return
 
         generic_assistant.request(message)
         waiting_order = False
 
-    if message == generic_assistant.get_assistant_name():
+    if message == data_preferences.get_assistant_name():
         print("Waiting for order")
         waiting_order = True
         recognizer = spr.Recognizer()
         return
 
-    if generic_assistant.get_assistant_name() in message:
-        message = message.replace(generic_assistant.get_assistant_name(), '')
+    if data_preferences.get_assistant_name() in message:
+        message = message.replace(data_preferences.get_assistant_name(), '')
         generic_assistant.request(message)
         return
 

@@ -1,26 +1,20 @@
-import random
-import pickle
-import numpy as np
-import ast
-
-import nltk
 from nltk.stem import WordNetLemmatizer
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.models import load_model
+from src.logic.data.data_intents import assistant_intents
 
-from src.api.iassistant import IAssistant
-from src.logic.data import assistant_info
-from src.logic.data import assistant_intents
-from src.logic import speech
+import random
+import pickle
+import numpy
+import ast
+import nltk
+import src.logic.voice.speech as speech
 
-nltk.download('punkt', quiet=True)
-nltk.download('wordnet', quiet=True)
 
-
-class GenericNeural(IAssistant):
+class GenericAssistant:
     def __init__(self, intent_methods={}, model_name="assistant_model"):
         self.intents = assistant_intents
         self.intent_methods = intent_methods
@@ -28,7 +22,6 @@ class GenericNeural(IAssistant):
         self.lemmatizer = WordNetLemmatizer()
 
     def train_model(self):
-
         self.words = []
         self.classes = []
         documents = []
@@ -62,7 +55,7 @@ class GenericNeural(IAssistant):
             training.append([bag, output_row])
 
         random.shuffle(training)
-        training = np.array(training)
+        training = numpy.array(training)
 
         train_x = list(training[:, 0])
         train_y = list(training[:, 1])
@@ -77,7 +70,7 @@ class GenericNeural(IAssistant):
         sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
         self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
-        self.hist = self.model.fit(np.array(train_x), np.array(train_y), epochs=200, batch_size=5, verbose=1)
+        self.hist = self.model.fit(numpy.array(train_x), numpy.array(train_y), epochs=200, batch_size=5, verbose=1)
 
     def save_model(self, model_name=None):
         if model_name is None:
@@ -111,28 +104,19 @@ class GenericNeural(IAssistant):
             for i, word in enumerate(words):
                 if word == s:
                     bag[i] = 1
-        return np.array(bag)
+        return numpy.array(bag)
 
     def _predict_class(self, sentence):
         p = self._bag_of_words(sentence, self.words)
-        res = self.model.predict(np.array([p]))[0]
-        ERROR_THRESHOLD = 0.1
-        results = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
+        res = self.model.predict(numpy.array([p]))[0]
+        error_threshold = 0.1
+        results = [[i, r] for i, r in enumerate(res) if r > error_threshold]
 
         results.sort(key=lambda x: x[1], reverse=True)
         return_list = []
         for r in results:
             return_list.append({'intent': self.classes[r[0]], 'probability': str(r[1])})
         return return_list
-
-    def request_tag(self, message):
-        pass
-
-    def get_tag_by_id(self, id):
-        pass
-
-    def request_method(self, message):
-        pass
 
     def request_response(self, message):
         ints = self._predict_class(message)
@@ -153,12 +137,9 @@ class GenericNeural(IAssistant):
         ints = self._predict_class(message)
 
         if ints[0]['intent'] in self.intent_methods.keys():
-            self.intent_methods[ints[0]['intent']](self, speech, message)
+            self.intent_methods[ints[0]['intent']](self, message, speech)
         else:
             return self.request_response(ints, self.intents)
 
-    def get_assistant_name(self):
-        return assistant_info['name'].lower()
-
-    def run(self):
+    def tick(self):
         speech.listen(self)
