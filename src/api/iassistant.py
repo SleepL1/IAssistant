@@ -26,3 +26,11 @@ class IAssistant(metaclass=ABCMeta):
     @abstractmethod
     def request_response(self, message):
         """ Implemented in child class """
+
+    @abstractmethod
+    def get_assistant_name(self):
+        """ Implemented in child class """
+
+    @abstractmethod
+    def run(self):
+        """ Implemented in child class """

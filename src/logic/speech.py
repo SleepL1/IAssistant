@@ -1,9 +1,10 @@
 import pyttsx3 as tts
 import speech_recognition as spr
-from src.ia.neural import GenericNeural as genericNeural
 
 recognizer = spr.Recognizer()
 speaker = tts.init()
+
+waiting_order = False
 
 
 def say(message):
@@ -11,9 +12,10 @@ def say(message):
     speaker.runAndWait()
 
 
-def listen():
+def listen(generic_assistant):
     print("Listening")
     global recognizer
+    global waiting_order
 
     try:
         with spr.Microphone() as mic:
@@ -21,21 +23,37 @@ def listen():
             audio = recognizer.listen(mic)
 
             message = recognizer.recognize_google(audio, language="es-ES")
-            validate_message(message)
+            validate_message(message, generic_assistant)
     except spr.UnknownValueError:
         recognizer = spr.Recognizer()
+        waiting_order = False
 
 
-def validate_message(message):
+def validate_message(message, generic_assistant):
     global recognizer
+    global waiting_order
 
     message = message.lower()
     message = normalize_message(message)
 
-    # Hardcoded name for now
-    if 'assistantname' in message:
-        message = message.replace('assistantname', '')
-        genericNeural.request(message)
+    if waiting_order:
+        if generic_assistant.get_assistant_name() in message:
+            message = message.replace(generic_assistant.get_assistant_name(), '')
+            generic_assistant.request(message)
+            return
+
+        generic_assistant.request(message)
+        waiting_order = False
+
+    if message == generic_assistant.get_assistant_name():
+        print("Waiting for order")
+        waiting_order = True
+        recognizer = spr.Recognizer()
+        return
+
+    if generic_assistant.get_assistant_name() in message:
+        message = message.replace(generic_assistant.get_assistant_name(), '')
+        generic_assistant.request(message)
         return
 
     recognizer = spr.Recognizer()

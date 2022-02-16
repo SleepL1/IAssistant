@@ -1,0 +1,16 @@
+{
+   "intents":[
+      {
+         "tag":"exit-program",
+         "patterns":[
+            "Apagate",
+            "Necesito que te apagues",
+            "Apágate"
+         ],
+         "responses":[
+            "Apagando sistema. Un segundo.",
+            "Enseguida."
+         ]
+      }
+   ]
+}

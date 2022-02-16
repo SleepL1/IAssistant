@@ -6,30 +6,26 @@ import ast
 import nltk
 from nltk.stem import WordNetLemmatizer
 
-from keras.optimizer_v1 import SGD
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
-from keras.models import load_model
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.models import load_model
 
 from src.api.iassistant import IAssistant
+from src.logic.data import assistant_info
+from src.logic.data import assistant_intents
+from src.logic import speech
 
 nltk.download('punkt', quiet=True)
 nltk.download('wordnet', quiet=True)
 
 
 class GenericNeural(IAssistant):
-    def __init__(self, intents, intent_methods={}, model_name="assistant_model"):
-        self.intents = intents
+    def __init__(self, intent_methods={}, model_name="assistant_model"):
+        self.intents = assistant_intents
         self.intent_methods = intent_methods
         self.model_name = model_name
-
-        if intents.endswith(".json"):
-            self.load_json_intents(intents)
-
         self.lemmatizer = WordNetLemmatizer()
-
-    def load_json_intents(self, intents):
-        self.intents = json.loads(open(intents, encoding='utf8').read())
 
     def train_model(self):
 
@@ -143,7 +139,7 @@ class GenericNeural(IAssistant):
 
         try:
             tag = ints[0]['intent']
-            list_of_intents = intents_json['intents']
+            list_of_intents = self.intents['intents']
             for i in list_of_intents:
                 if i['tag'] == tag:
                     result = random.choice(i['responses'])
@@ -157,9 +153,12 @@ class GenericNeural(IAssistant):
         ints = self._predict_class(message)
 
         if ints[0]['intent'] in self.intent_methods.keys():
-            self.intent_methods[ints[0]['intent']](message)
+            self.intent_methods[ints[0]['intent']](self, speech, message)
         else:
-            return self.get_response(ints, self.intents)
+            return self.request_response(ints, self.intents)
 
+    def get_assistant_name(self):
+        return assistant_info['name'].lower()
 
-
+    def run(self):
+        speech.listen(self)
