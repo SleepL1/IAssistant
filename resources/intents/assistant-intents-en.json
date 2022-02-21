@@ -1,17 +1,27 @@
 {
-   "intents":[
-      {
-         "tag":"exit-program",
-         "patterns":[
-            "Turn off",
-            "Shut down",
-            "Stop program",
-            "Stop it"
-         ],
-         "responses":[
-            "Shutting down system. Wait a second.",
-            "Shutting down."
-         ]
-      }
-   ]
+  "intents": [
+    {
+      "tag": "exit-program",
+      "patterns": [
+        "Turn off",
+        "Shut down",
+        "Stop program",
+        "Stop it"
+      ],
+      "responses": [
+        "Shutting down system. Wait a second.",
+        "Shutting down."
+      ]
+    },
+    {
+      "tag": "first-start-greetings",
+      "patterns": [
+        ""
+      ],
+      "responses": [
+        "Hi",
+        "Good morning"
+      ]
+    }
+  ]
 }

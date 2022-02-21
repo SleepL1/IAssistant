@@ -1,16 +1,26 @@
 {
-   "intents":[
-      {
-         "tag":"exit-program",
-         "patterns":[
-            "Apagate",
-            "Necesito que te apagues",
-            "Apágate"
-         ],
-         "responses":[
-            "Apagando sistema. Un segundo.",
-            "Enseguida."
-         ]
-      }
-   ]
+  "intents": [
+    {
+      "tag": "exit-program",
+      "patterns": [
+        "Apagate",
+        "Necesito que te apagues",
+        "Apágate"
+      ],
+      "responses": [
+        "Apagando sistema. Un segundo.",
+        "Enseguida."
+      ]
+    },
+    {
+      "tag": "first-start-greetings",
+      "patterns": [
+        ""
+      ],
+      "responses": [
+        "Hola",
+        "Buen día"
+      ]
+    }
+  ]
 }

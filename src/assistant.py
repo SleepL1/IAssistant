@@ -13,6 +13,10 @@ import ast
 import nltk
 import src.logic.voice.speech as speech
 
+from src.logic.lang.language import translator
+
+justStarted = True
+
 
 class GenericAssistant:
     def __init__(self, intent_methods={}, model_name="assistant_model"):
@@ -137,9 +141,13 @@ class GenericAssistant:
         ints = self._predict_class(message)
 
         if ints[0]['intent'] in self.intent_methods.keys():
-            self.intent_methods[ints[0]['intent']](self, message, speech)
-        else:
-            return self.request_response(ints, self.intents)
+            self.intent_methods[ints[0]['intent']](self, message, speech, translator)
 
     def tick(self):
+        global justStarted
+
+        if justStarted:
+            speech.say(self.request_response('first-start-greetings'))
+            justStarted = False
+
         speech.listen(self)
