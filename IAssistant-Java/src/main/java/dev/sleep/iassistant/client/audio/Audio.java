@@ -7,6 +7,7 @@ import javax.sound.sampled.TargetDataLine;
 
 import dev.sleep.iassistant.IAssistant;
 import dev.sleep.iassistant.callback.AudioCaptureCallback;
+import dev.sleep.iassistant.client.state.State;
 
 public class Audio {
 
@@ -21,7 +22,7 @@ public class Audio {
 
 	public void captureAudio(IAssistant assistant) {
 		try {
-			assistant.listening = true;
+			assistant.currentState = State.LISTENING;
 			
 			microphone = (TargetDataLine) AudioSystem.getLine(audioDataInfo);
 			microphone.open(audioFormat);
@@ -31,13 +32,13 @@ public class Audio {
 			int CHUNK_SIZE = 1024;
 			byte[] newByte = new byte[4096];
 
-			while (assistant.listening) {
+			while (assistant.currentState == State.LISTENING) {
 				numBytesRead = microphone.read(newByte, 0, CHUNK_SIZE);
 				
 				if(passWaveForm(assistant, newByte, numBytesRead)){
 					clean();
 					
-					assistant.listening = false;
+					assistant.currentState = State.IDLE;
 					assistant.perfomRequest();
 				}
 			}
@@ -48,7 +49,7 @@ public class Audio {
 	
 	public void captureAudio(IAssistant assistant, AudioCaptureCallback audioCaptureCallback) {
 		try {
-			assistant.listening = true;
+			assistant.currentState = State.LISTENING;
 			
 			microphone = (TargetDataLine) AudioSystem.getLine(audioDataInfo);
 			microphone.open(audioFormat);
@@ -58,13 +59,13 @@ public class Audio {
 			int CHUNK_SIZE = 1024;
 			byte[] newByte = new byte[4096];
 
-			while (assistant.listening) {
+			while (assistant.currentState == State.LISTENING) {
 				numBytesRead = microphone.read(newByte, 0, CHUNK_SIZE);
 				
 				if(passWaveForm(assistant, newByte, numBytesRead)){
 					clean();
 					
-					assistant.listening = false;
+					assistant.currentState = State.IDLE;
 					audioCaptureCallback.onAudioCaptured();
 				}
 			}

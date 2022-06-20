@@ -1,4 +1,4 @@
-package dev.sleep.iassistant.client.data;
+package dev.sleep.iassistant.resource.data;
 
 public class AssistantData {
 	

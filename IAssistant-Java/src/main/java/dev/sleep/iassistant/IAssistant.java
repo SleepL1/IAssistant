@@ -7,6 +7,7 @@ import dev.sleep.iassistant.callback.AudioCaptureCallback;
 import dev.sleep.iassistant.client.audio.Audio;
 import dev.sleep.iassistant.client.resource.Resource;
 import dev.sleep.iassistant.client.speech.Vosk;
+import dev.sleep.iassistant.client.state.State;
 
 public class IAssistant {
 
@@ -14,7 +15,7 @@ public class IAssistant {
 	private Audio audio;
 	private Vosk vosk;
 
-	public boolean listening;
+	public State currentState;
 
 	public void init() {
 		LibVosk.setLogLevel(LogLevel.WARNINGS);

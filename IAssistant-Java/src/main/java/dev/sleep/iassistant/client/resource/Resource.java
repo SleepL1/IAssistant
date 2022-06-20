@@ -11,7 +11,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-import dev.sleep.iassistant.client.data.AssistantData;
+import dev.sleep.iassistant.resource.data.AssistantData;
 
 public class Resource {
 
