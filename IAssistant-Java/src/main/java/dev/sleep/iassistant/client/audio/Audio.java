@@ -6,6 +6,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.TargetDataLine;
 
 import dev.sleep.iassistant.IAssistant;
+import dev.sleep.iassistant.callback.AudioCaptureCallback;
 
 public class Audio {
 
@@ -20,6 +21,8 @@ public class Audio {
 
 	public void captureAudio(IAssistant assistant) {
 		try {
+			assistant.listening = true;
+			
 			microphone = (TargetDataLine) AudioSystem.getLine(audioDataInfo);
 			microphone.open(audioFormat);
 			microphone.start();
@@ -33,7 +36,36 @@ public class Audio {
 				
 				if(passWaveForm(assistant, newByte, numBytesRead)){
 					clean();
+					
+					assistant.listening = false;
 					assistant.perfomRequest();
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Failed to capture audio: " + e.getLocalizedMessage());
+		}
+	}
+	
+	public void captureAudio(IAssistant assistant, AudioCaptureCallback audioCaptureCallback) {
+		try {
+			assistant.listening = true;
+			
+			microphone = (TargetDataLine) AudioSystem.getLine(audioDataInfo);
+			microphone.open(audioFormat);
+			microphone.start();
+
+			int numBytesRead;
+			int CHUNK_SIZE = 1024;
+			byte[] newByte = new byte[4096];
+
+			while (assistant.listening) {
+				numBytesRead = microphone.read(newByte, 0, CHUNK_SIZE);
+				
+				if(passWaveForm(assistant, newByte, numBytesRead)){
+					clean();
+					
+					assistant.listening = false;
+					audioCaptureCallback.onAudioCaptured();
 				}
 			}
 		} catch (Exception e) {

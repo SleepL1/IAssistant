@@ -3,6 +3,7 @@ package dev.sleep.iassistant;
 import org.vosk.LibVosk;
 import org.vosk.LogLevel;
 
+import dev.sleep.iassistant.callback.AudioCaptureCallback;
 import dev.sleep.iassistant.client.audio.Audio;
 import dev.sleep.iassistant.client.speech.Vosk;
 
@@ -24,13 +25,14 @@ public class IAssistant {
 	}
 
 	public void listen() {
-		listening = true;
 		audio.captureAudio(this);
 	}
+	
+	public void listen(AudioCaptureCallback audioCaptureCallback) {
+		audio.captureAudio(this, audioCaptureCallback);
+	}
 
-	public void perfomRequest() {
-		listening = false;
-		
+	public void perfomRequest() {		
 		System.out.println(vosk.getRecognizer().getFinalResult());
 		listen();
 	}
