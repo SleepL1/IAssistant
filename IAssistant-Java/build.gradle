@@ -11,6 +11,8 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     api 'org.apache.commons:commons-math3:3.6.1'
     
+    implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
     implementation group: 'net.java.dev.jna', name: 'jna', version: '5.7.0'
     implementation group: 'com.alphacephei', name: 'vosk', version: '0.3.38'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
 }
