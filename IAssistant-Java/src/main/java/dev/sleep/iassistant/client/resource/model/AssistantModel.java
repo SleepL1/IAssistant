@@ -1,10 +1,10 @@
-package dev.sleep.iassistant.client.resource.data;
+package dev.sleep.iassistant.client.resource.model;
 
-public class AssistantData {
+public class AssistantModel {
 	
 	private String wakeName;
 	
-	public AssistantData() {
+	public AssistantModel() {
 		wakeName = "No Name";
 	}
 

@@ -1,11 +1,11 @@
 package dev.sleep.example;
 
-import dev.sleep.iassistant.IAssistant;
+import dev.sleep.iassistant.MainIAssistant;
 
 public class ExampleMain {
 
 	public static void main(String[] args) {
-		IAssistant genericAssistant = new IAssistant();
+		MainIAssistant genericAssistant = new MainIAssistant();
 
 		genericAssistant.init();
 		genericAssistant.listen();

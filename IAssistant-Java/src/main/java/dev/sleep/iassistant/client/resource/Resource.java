@@ -11,11 +11,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-import dev.sleep.iassistant.client.resource.data.AssistantData;
+import dev.sleep.iassistant.client.resource.model.AssistantModel;
 
 public class Resource {
 
-	private AssistantData assistantData;
+	private AssistantModel assistantData;
 	private Gson gson;
 
 	private final String DATA_DIRECTORY_PATH = System.getenv("APPDATA") + "\\IAssistant";
@@ -55,7 +55,7 @@ public class Resource {
 
 	private void populateDataFromJson(File dataFile) {
 		try {
-			assistantData = gson.fromJson(Files.asCharSource(dataFile, Charsets.UTF_8).read(), AssistantData.class);
+			assistantData = gson.fromJson(Files.asCharSource(dataFile, Charsets.UTF_8).read(), AssistantModel.class);
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -65,7 +65,7 @@ public class Resource {
 
 	private void populateJsonFromData(File dataFile) {
 		try(FileWriter writer = new FileWriter(dataFile)) {
-			assistantData = new AssistantData();
+			assistantData = new AssistantModel();
 			gson.toJson(assistantData, writer);
 			
 			writer.flush();
@@ -77,7 +77,7 @@ public class Resource {
 		}
 	}
 	
-	public AssistantData getAssistantData() {
+	public AssistantModel getAssistantData() {
 		return assistantData;
 	}
 }
